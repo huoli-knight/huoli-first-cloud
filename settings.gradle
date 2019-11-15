@@ -1,0 +1,3 @@
+rootProject.name = 'huoli-first-cloud'
+include 'eureka'
+

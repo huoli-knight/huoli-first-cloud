@@ -1,0 +1,69 @@
+//构建gradle
+buildscript {
+    //定义变量
+    ext {
+        //在大版本之间转换可能产生冲突
+        //在1.5.9 和 2.1.4 之间引入的包依赖不能混淆，
+        // 版本不同可能导致找不到相应的类或方法
+        springBootVersion = "2.1.4.RELEASE"
+        SUIXINGPAY = 'http://172.16.60.188:8081/nexus/content/groups/public'
+        ALIYUN = 'http://maven.aliyun.com/nexus/content/groups/public/'
+    }
+
+    //打包用
+    apply plugin: 'maven'
+    //按顺序查找依赖
+    //声明的顺序决定了Gradle将如何在运行时检查依赖项的顺序。
+    // 如果Gradle在特定的存储库中找到一个模块描述符，
+    // 它将尝试从同一个存储库下载该模块的所有工件。
+    //这点是构建项目时需要包下载的路径
+    repositories {
+        maven {
+            url SUIXINGPAY
+        }
+        //优先使用国内的源-阿里云
+        maven {
+            url ALIYUN
+        }
+        mavenCentral()
+    }
+    dependencies {
+        //引入gradle所需要的依赖，这里是支持此项目的基本依赖
+        classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
+    }
+}
+
+//这点是所有工程配置
+allprojects {
+    repositories {
+        maven {
+            url SUIXINGPAY
+        }
+        //优先使用国内的源-阿里云
+        maven {
+            url ALIYUN
+        }
+        mavenCentral()
+    }
+}
+//公共配置
+subprojects {
+    apply plugin: 'java'
+    apply plugin: 'idea'
+
+    //当前项目的版本
+    version = '1.0-SNAPSHOT'
+    // 设置group id
+    group = 'com.huoli'
+    //java版本
+    sourceCompatibility = 1.8
+    //这里是所有模块的依赖，建议只导入一些所有模块必用依赖
+    //导入依赖是去掉版本号，避免版本冲突，公司配置中做了版本的管理，这里加上2.1.4版
+    dependencies {
+        compile 'org.springframework.boot:spring-boot-test-autoconfigure:2.1.4.RELEASE'
+        //建议使用lombok，很方便
+        compile 'org.projectlombok:lombok:1.18.10'
+        compile 'org.springframework.boot:spring-boot-starter-test:2.1.4.RELEASE'
+
+    }
+}
