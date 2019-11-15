@@ -1,3 +1,3 @@
 # 简介
 
-简单的springcloud项目搭建
+简单的springCloud项目搭建
